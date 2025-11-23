@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>毕达哥拉斯树生成器</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            font-family: 'Microsoft YaHei', sans-serif;
+            color: white;
+            overflow: auto;
+            padding: 20px 0;
+        }
+        h1 {
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .subtitle {
+            margin-bottom: 15px;
+            color: #e0e0ff;
+            text-align: center;
+            max-width: 800px;
+        }
+        .container {
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        canvas {
+            background-color: rgba(0, 10, 20, 0.85);
+            display: block;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        .info {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 700px;
+            margin: 15px auto;
+            text-align: center;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        a {
+            color: #ff9d00;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .params {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .param-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 15px;
+            border-radius: 30px;
+            min-width: 180px;
+        }
+        input[type="range"] {
+            width: 160px;
+        }
+        .param-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 5px;
+            min-width: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>毕达哥拉斯树生成器</h1>
+    <div class="subtitle">基于直角三角形的递归分形 | 树从画布底部中心开始生长</div>
+    
+    <div class="container">
+        <canvas id="treeCanvas" width="900" height="700"></canvas>
+    </div>
+    
+    <div class="controls">
+        <button id="drawButton">生成新树</button>
+        <button id="pauseButton">暂停/继续</button>
+        <button id="resetButton">重置参数</button>
+        <button id="fullScreenBtn">全屏模式</button>
+    </div>
+    
+    <div class="params">
+        <div class="param-group">
+            <div>递归深度</div>
+            <input type="range" id="depth" min="4" max="25" value="12">
+            <div class="param-value" id="depthValue">12</div>
+        </div>
+        
+        <div class="param-group">
+            <div>分支角度 (°)</div>
+            <input type="range" id="angle" min="25" max="65" value="45">
+            <div class="param-value" id="angleValue">45</div>
+        </div>
+        
+        <div class="param-group">
+            <div>生长速度</div>
+            <input type="range" id="speed" min="0.1" max="10" value="3" step="0.1">
+            <div class="param-value" id="speedValue">3</div>
+        </div>
+    </div>
+    
+    <div class="info">
+        毕达哥拉斯树通过递归方式创建：以正方形为基础，在每边生成两个直角三角形，然后在直角边上构建新正方形。
+        此程序使用Canvas绘制，树从画布底部中心开始生长，最多支持25层递归深度（相当于超过300万个正方形）。
+    </div>
+
+    <script>
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationId = null;
+        let paused = false;
+        let growth = 0;
+        let maxGrowth = 1;
+        
+        // 参数控制
+        let maxDepth = 12;
+        let branchAngle = Math.PI/4; // 45度
+        let animationSpeed = 3; // 默认速度
+        
+        // 更新显示的参数值
+        function updateParamValues() {
+            document.getElementById('depthValue').textContent = maxDepth;
+            document.getElementById('angleValue').textContent = Math.round(branchAngle * 180 / Math.PI);
+            document.getElementById('speedValue').textContent = animationSpeed.toFixed(1);
+        }
+        
+        // 重置参数
+        function resetParams() {
+            maxDepth = 12;
+            branchAngle = Math.PI/4;
+            animationSpeed = 3;
+            document.getElementById('depth').value = maxDepth;
+            document.getElementById('angle').value = branchAngle * 180 / Math.PI;
+            document.getElementById('speed').value = animationSpeed;
+            updateParamValues();
+            startAnimation();
+        }
+        
+        // 监听参数变化
+        document.getElementById('depth').addEventListener('input', (e) => {
+            maxDepth = parseInt(e.target.value);
+            updateParamValues();
+        });
+        
+        document.getElementById('angle').addEventListener('input', (e) => {
+            branchAngle = e.target.value * Math.PI / 180;
+            updateParamValues();
+        });
+        
+        document.getElementById('speed').addEventListener('input', (e) => {
+            animationSpeed = parseFloat(e.target.value);
+            updateParamValues();
+        });
+        
+        // 绘制毕达哥拉斯树
+        function drawTree(x, y, size, angle, depth, growth) {
+            if (depth <= 0 || size < 0.5) return;
+            
+            // 计算实际尺寸（根据生长进度）
+            const scaledSize = size * growth;
+            if (scaledSize < 0.5) return;
+            
+            // 计算正方形的四个顶点
+            const x1 = x + scaledSize * Math.cos(angle);
+            const y1 = y - scaledSize * Math.sin(angle);
+            const x2 = x1 - scaledSize * Math.sin(angle);
+            const y2 = y1 - scaledSize * Math.cos(angle);
+            const x3 = x - scaledSize * Math.sin(angle);
+            const y3 = y - scaledSize * Math.cos(angle);
+            
+            // 设置绘制颜色（根据深度）
+            const hue = (depth * 25) % 360;
+            const sat = 70 + depth * 2;
+            const light = 40 + depth * 3;
+            ctx.strokeStyle = `hsl(${hue}, ${sat}%, ${light}%)`;
+            ctx.lineWidth = Math.max(0.5, depth / 4);
+            
+            // 绘制正方形
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineTo(x3, y3);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 计算递归深度
+            const nextDepth = growth < 1 ? depth - 1 : depth;
+            
+            // 递归绘制左右分支
+            if (nextDepth > 0) {
+                const angle1 = angle + branchAngle;
+                const angle2 = angle - branchAngle;
+                
+                const startX = (x1 + x2) / 2;
+                const startY = (y1 + y2) / 2;
+                
+                const newSize = scaledSize * Math.abs(Math.sin(branchAngle));
+                
+                drawTree(startX, startY, newSize, angle1, nextDepth - 1, growth);
+                drawTree(startX, startY, newSize, angle2, nextDepth - 1, growth);
+            }
+        }
+        
+        // 绘制动画
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (!paused) {
+                // 更新生长进度
+                growth += 0.01 * animationSpeed;
+                if (growth > maxGrowth) growth = maxGrowth;
+            }
+            
+            // 从画布底部中心开始绘制
+            const startX = canvas.width / 2;
+            const startY = canvas.height - 30;  // 离底部30像素
+            
+            // 绘制主干（初始正方形大小为120）
+            drawTree(startX, startY, 120, 0, maxDepth, growth);
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        // 开始动画
+        function startAnimation() {
+            growth = 0;
+            paused = false;
+            if (animationId) cancelAnimationFrame(animationId);
+            animate();
+        }
+        
+        // 事件监听
+        document.getElementById('drawButton').addEventListener('click', startAnimation);
+        document.getElementById('pauseButton').addEventListener('click', () => paused = !paused);
+        document.getElementById('resetButton').addEventListener('click', resetParams);
+        
+        document.getElementById('fullScreenBtn').addEventListener('click', () => {
+            if (canvas.requestFullscreen) {
+                canvas.requestFullscreen();
+            } else if (canvas.webkitRequestFullscreen) {
+                canvas.webkitRequestFullscreen();
+            } else if (canvas.msRequestFullscreen) {
+                canvas.msRequestFullscreen();
+            }
+        });
+        
+        // 点击画布开始
+        canvas.addEventListener('click', startAnimation);
+        
+        // 初始化
+        resetParams();
+        updateParamValues();
+        
+        // 绘制介绍文本
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        ctx.font = "24px 'Microsoft YaHei', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("点击此处开始绘制毕达哥拉斯树", canvas.width/2, canvas.height/2 - 40);
+        ctx.font = "18px 'Microsoft YaHei', sans-serif";
+        ctx.fillText("树将从底部中心开始生长", canvas.width/2, canvas.height/2 + 10);
+        ctx.font = "16px 'Microsoft YaHei', sans-serif";
+        ctx.fillText("调整参数控制树的形状和递归深度", canvas.width/2, canvas.height/2 + 50);
+    </script>
+</body>
+</html>

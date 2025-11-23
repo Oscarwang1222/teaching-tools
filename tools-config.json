@@ -1,0 +1,25 @@
+{
+  "tools": [
+    {
+      "name": "一次函数演示",
+      "description": "演示一次函数",
+      "tags": ["图像", "函数"],
+      "icon": "📐",
+      "featured": false
+    },
+    {
+      "name": "数据统计",
+      "description": "根据输入的数据计算平均数、离散平方和、方差和标准差",
+      "tags": ["统计"],
+      "icon": "📊",
+      "featured": true
+    },
+    {
+      "name": "勾股树",
+      "description": "显示勾股树",
+      "tags": ["勾股定理", "图像"],
+      "icon": "📊",
+      "featured": true
+    }
+  ]
+}
