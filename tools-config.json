@@ -22,6 +22,21 @@
       "tags": ["勾股定理", "图像"],
       "subject": ["数学"],
       "icon": "📊",
+      "featured": false
+    },
+    {
+      "name": "箱线图与分位数",
+      "description": "根据输入数据显示9个分位数和箱线图",
+      "tags": ["统计", "图像"],
+      "subject": ["数学"],
+      "icon": "📊",
+      "featured": true
+    },{
+      "name": "凸透镜成像规律",
+      "description": "动态HTML凸透镜成像规律演示",
+      "tags": ["动画", "图像"],
+      "subject": ["物理"],
+      "icon": "📊",
       "featured": true
     }
   ]
