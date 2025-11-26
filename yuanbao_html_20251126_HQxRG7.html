@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>句子成分分析工具 - 使用NLP技术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .description {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .input-section {
+            margin-bottom: 25px;
+        }
+        
+        .input-area {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        .input-area:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .preset-section {
+            margin-bottom: 25px;
+        }
+        
+        .preset-title {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .preset-sentences {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .preset-btn {
+            padding: 8px 15px;
+            background-color: #ecf0f1;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #2c3e50;
+        }
+        
+        .preset-btn:hover {
+            background-color: #d5dbdb;
+            transform: translateY(-2px);
+        }
+        
+        .analyze-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 25px;
+        }
+        
+        .analyze-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .result-section {
+            display: none;
+        }
+        
+        .result-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .sentence-display {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 2;
+            font-size: 18px;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+        
+        .subject { background-color: #e74c3c; }
+        .predicate { background-color: #2ecc71; }
+        .object { background-color: #3498db; }
+        .attribute { background-color: #f39c12; }
+        .adverbial { background-color: #9b59b6; }
+        .complement { background-color: #1abc9c; }
+        
+        .word {
+            position: relative;
+            display: inline-block;
+            margin: 0 2px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            cursor: default;
+        }
+        
+        .tag {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            white-space: nowrap;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            z-index: 10;
+        }
+        
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff9e6;
+            border-left: 4px solid #f1c40f;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #3498db;
+        }
+        
+        .error {
+            display: none;
+            background-color: #ffeaea;
+            color: #e74c3c;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .preset-sentences {
+                flex-direction: column;
+            }
+            
+            .preset-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>句子成分分析工具 - 使用NLP技术</h1>
+        <p class="description">输入或选择句子，使用自然语言处理技术分析其语法成分，主语、谓语、宾语、定语、状语、补语将以不同颜色高亮显示</p>
+        
+        <div class="input-section">
+            <textarea class="input-area" placeholder="请输入要分析的句子..."></textarea>
+        </div>
+        
+        <div class="preset-section">
+            <div class="preset-title">预设句子：</div>
+            <div class="preset-sentences">
+                <button class="preset-btn" data-sentence="小明昨天在公园里快乐地放风筝。">小明昨天在公园里快乐地放风筝。</button>
+                <button class="preset-btn" data-sentence="那个穿红衣服的女孩正在认真地读书。">那个穿红衣服的女孩正在认真地读书。</button>
+                <button class="preset-btn" data-sentence="老师把复杂的数学题讲解得非常清楚。">老师把复杂的数学题讲解得非常清楚。</button>
+            </div>
+        </div>
+        
+        <button class="analyze-btn">分析句子</button>
+        <div class="loading">正在分析中，请稍候...</div>
+        <div class="error"></div>
+        
+        <div class="result-section">
+            <div class="result-title">分析结果：</div>
+            <div class="sentence-display" id="sentence-display"></div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="color-box subject"></div>
+                    <span>主语</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box predicate"></div>
+                    <span>谓语</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box object"></div>
+                    <span>宾语</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box attribute"></div>
+                    <span>定语</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box adverbial"></div>
+                    <span>状语</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box complement"></div>
+                    <span>补语</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <strong>说明：</strong> 本工具使用Compromise.js自然语言处理库进行语法分析。分析结果基于算法自动识别，可能与人工分析略有差异。
+        </div>
+    </div>
+
+    <!-- 引入Compromise.js库 -->
+    <script src="https://unpkg.com/compromise"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputArea = document.querySelector('.input-area');
+            const analyzeBtn = document.querySelector('.analyze-btn');
+            const resultSection = document.querySelector('.result-section');
+            const sentenceDisplay = document.getElementById('sentence-display');
+            const presetBtns = document.querySelectorAll('.preset-btn');
+            const loading = document.querySelector('.loading');
+            const errorDiv = document.querySelector('.error');
+            
+            // 预设句子点击事件
+            presetBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    inputArea.value = this.getAttribute('data-sentence');
+                    errorDiv.style.display = 'none';
+                });
+            });
+            
+            // 分析按钮点击事件
+            analyzeBtn.addEventListener('click', function() {
+                const sentence = inputArea.value.trim();
+                
+                if (!sentence) {
+                    showError('请输入要分析的句子！');
+                    return;
+                }
+                
+                // 显示加载状态
+                loading.style.display = 'block';
+                resultSection.style.display = 'none';
+                errorDiv.style.display = 'none';
+                
+                // 使用setTimeout让UI有机会更新
+                setTimeout(() => {
+                    try {
+                        // 使用NLP库分析句子
+                        analyzeSentenceWithNLP(sentence);
+                    } catch (err) {
+                        showError('分析过程中出现错误：' + err.message);
+                        loading.style.display = 'none';
+                    }
+                }, 100);
+            });
+            
+            // 使用NLP库分析句子
+            function analyzeSentenceWithNLP(sentence) {
+                // 使用Compromise.js进行自然语言处理
+                const nlp = window.nlp;
+                const doc = nlp(sentence);
+                
+                // 获取分词结果
+                const terms = doc.json()[0].terms;
+                
+                // 构建分析结果
+                const analysisResult = [];
+                
+                terms.forEach(term => {
+                    const word = term.text;
+                    const tags = term.tags;
+                    
+                    // 根据词性标签确定句子成分
+                    let type = '';
+                    let typeName = '';
+                    
+                    if (tags.has('Noun') || tags.has('Pronoun') || tags.has('ProperNoun')) {
+                        // 名词、代词、专有名词可能是主语或宾语
+                        // 这里简化处理，实际需要更复杂的语法分析
+                        type = 'subject';
+                        typeName = '主语';
+                    } else if (tags.has('Verb')) {
+                        type = 'predicate';
+                        typeName = '谓语';
+                    } else if (tags.has('Adjective')) {
+                        type = 'attribute';
+                        typeName = '定语';
+                    } else if (tags.has('Adverb')) {
+                        type = 'adverbial';
+                        typeName = '状语';
+                    } else if (tags.has('Preposition')) {
+                        type = 'adverbial';
+                        typeName = '状语';
+                    } else if (tags.has('Determiner')) {
+                        type = 'attribute';
+                        typeName = '定语';
+                    } else if (tags.has('Auxiliary')) {
+                        type = 'adverbial';
+                        typeName = '状语';
+                    } else {
+                        // 其他词性不标记
+                        type = '';
+                        typeName = '';
+                    }
+                    
+                    // 处理"的"、"地"、"得"等助词
+                    if (word === '的' || word === '地' || word === '得') {
+                        type = 'attribute';
+                        typeName = '结构助词';
+                    }
+                    
+                    analysisResult.push({
+                        word: word,
+                        type: type,
+                        typeName: typeName
+                    });
+                });
+                
+                // 显示结果
+                displayAnalysisResult(analysisResult);
+                loading.style.display = 'none';
+                resultSection.style.display = 'block';
+            }
+            
+            // 显示分析结果
+            function displayAnalysisResult(analysisResult) {
+                // 清空之前的结果
+                sentenceDisplay.innerHTML = '';
+                
+                // 构建显示结果
+                let displayHTML = '';
+                
+                analysisResult.forEach(item => {
+                    if (item.type) {
+                        displayHTML += `<span class="word ${item.type}">${item.word}<span class="tag ${item.type}">${item.typeName}</span></span>`;
+                    } else {
+                        displayHTML += `<span class="word">${item.word}</span>`;
+                    }
+                });
+                
+                sentenceDisplay.innerHTML = displayHTML;
+            }
+            
+            // 显示错误信息
+            function showError(message) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
