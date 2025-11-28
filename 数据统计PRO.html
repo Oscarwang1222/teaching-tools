@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,7 +38,7 @@
             background: var(--card-bg);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 20px;
         }
 
@@ -51,7 +52,7 @@
         .input-wrapper {
             position: relative;
             width: 100%;
-            max-width: 300px; 
+            max-width: 300px;
             flex: 1 1 250px;
         }
 
@@ -64,6 +65,7 @@
             box-sizing: border-box;
             resize: vertical;
             font-family: monospace;
+            font-size: 16px;
         }
 
         textarea:focus {
@@ -93,7 +95,7 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             user-select: none;
             transition: transform 0.2s;
         }
@@ -123,17 +125,24 @@
             background-color: #27ae60;
             color: white;
         }
-        .btn-add:hover { background-color: #219150; }
+
+        .btn-add:hover {
+            background-color: #219150;
+        }
 
         .btn-calc {
             background-color: var(--primary-color);
             color: white;
         }
-        .btn-calc:hover { background-color: #357abd; }
+
+        .btn-calc:hover {
+            background-color: #357abd;
+        }
 
         /* 结果区域样式 */
         .results-section {
-            display: none; /* 初始隐藏 */
+            display: none;
+            /* 初始隐藏 */
             flex-direction: column;
             gap: 20px;
         }
@@ -142,10 +151,15 @@
             background: var(--card-bg);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
-        h2 { margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
 
         /* 排序后数据 */
         .sorted-data-row {
@@ -156,7 +170,12 @@
             padding: 8px;
             border-radius: 4px;
         }
-        .group-name { font-weight: bold; color: var(--primary-color); margin-right: 10px; }
+
+        .group-name {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
 
         /* 表格布局 */
         .tables-container {
@@ -177,7 +196,8 @@
             font-size: 0.9rem;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
@@ -188,7 +208,9 @@
             font-weight: 600;
         }
 
-        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
         /* 图表容器 */
         .charts-container {
@@ -197,250 +219,252 @@
             gap: 20px;
             height: 450px;
         }
+
         @media (max-width: 768px) {
             .charts-container {
                 grid-template-columns: 1fr;
                 height: auto;
             }
         }
+
         .chart-box {
             height: 400px;
         }
-
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>数据统计分析</h1>
+    <div class="container">
+        <h1>数据统计分析</h1>
 
-    <div class="input-section">
-        <div id="inputsContainer" class="input-group-container">
+        <div class="input-section">
+            <div id="inputsContainer" class="input-group-container">
             </div>
-        
-        <div class="controls">
-            <button class="btn-add" onclick="addNewGroup()">+ 添加新数据组</button>
-            <button class="btn-calc" onclick="startStatistics()">开始统计</button>
-        </div>
-    </div>
 
-    <div id="resultsSection" class="results-section">
-        
-        <div class="card">
-            <h2>排序后的数据 (从小到大)</h2>
-            <div id="sortedDataContainer"></div>
+            <div class="controls">
+                <button class="btn-add" onclick="addNewGroup()">+ 添加新数据组</button>
+                <button class="btn-calc" onclick="startStatistics()">开始统计</button>
+            </div>
         </div>
 
-        <div class="tables-container">
+        <div id="resultsSection" class="results-section">
+
             <div class="card">
-                <h2>分位数统计</h2>
-                <div style="overflow-x: auto;">
-                    <table id="quantileTable">
-                        <thead>
-                            <tr>
-                                <th>组别</th>
-                                <th>Min</th>
-                                <th>3%</th>
-                                <th>5%</th>
-                                <th>10%</th>
-                                <th>25%</th>
-                                <th>50%</th>
-                                <th>75%</th>
-                                <th>90%</th>
-                                <th>95%</th>
-                                <th>97%</th>
-                                <th>Max</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <h2>排序后的数据 (从小到大)</h2>
+                <div id="sortedDataContainer"></div>
+            </div>
+
+            <div class="tables-container">
+                <div class="card">
+                    <h2>分位数统计</h2>
+                    <div style="overflow-x: auto;">
+                        <table id="quantileTable">
+                            <thead>
+                                <tr>
+                                    <th>组别</th>
+                                    <th>Min</th>
+                                    <th>3%</th>
+                                    <th>5%</th>
+                                    <th>10%</th>
+                                    <th>25%</th>
+                                    <th>50%</th>
+                                    <th>75%</th>
+                                    <th>90%</th>
+                                    <th>95%</th>
+                                    <th>97%</th>
+                                    <th>Max</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>核心统计量</h2>
+                    <div style="overflow-x: auto;">
+                        <table id="statsTable">
+                            <thead>
+                                <tr>
+                                    <th>组别</th>
+                                    <th>平均数</th>
+                                    <th>众数</th>
+                                    <th>离差平方和</th>
+                                    <th>方差(/n)</th>
+                                    <th>标准差(/n)</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h2>核心统计量</h2>
-                <div style="overflow-x: auto;">
-                    <table id="statsTable">
-                        <thead>
-                            <tr>
-                                <th>组别</th>
-                                <th>平均数</th>
-                                <th>众数</th>
-                                <th>离差平方和</th>
-                                <th>方差(/n)</th>
-                                <th>标准差(/n)</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+            <div class="charts-container">
+                <div class="card">
+                    <h2>箱线图 (Box Plot)</h2>
+                    <div id="boxPlot" class="chart-box"></div>
+                </div>
+                <div class="card">
+                    <h2>条形图 (各组平均数对比)</h2>
+                    <div id="barChart" class="chart-box"></div>
                 </div>
             </div>
-        </div>
 
-        <div class="charts-container">
-            <div class="card">
-                <h2>箱线图 (Box Plot)</h2>
-                <div id="boxPlot" class="chart-box"></div>
-            </div>
-            <div class="card">
-                <h2>条形图 (各组平均数对比)</h2>
-                <div id="barChart" class="chart-box"></div>
-            </div>
         </div>
-
     </div>
-</div>
 
-<script>
-    let groupCount = 0;
+    <script>
+        let groupCount = 0;
 
-    // 初始化：添加第一个输入框
-    document.addEventListener('DOMContentLoaded', () => {
-        addNewGroup();
-    });
+        // 初始化：添加第一个输入框
+        document.addEventListener('DOMContentLoaded', () => {
+            addNewGroup();
+        });
 
-    // 添加新的输入组
-    function addNewGroup() {
-        groupCount++;
-        const container = document.getElementById('inputsContainer');
-        
-        const wrapper = document.createElement('div');
-        wrapper.className = 'input-wrapper';
-        wrapper.id = `group-wrapper-${groupCount}`;
-        
-        const label = document.createElement('span');
-        label.className = 'group-label';
-        label.innerText = `数据组 ${groupCount}`;
+        // 添加新的输入组
+        function addNewGroup() {
+            groupCount++;
+            const container = document.getElementById('inputsContainer');
 
-        const textarea = document.createElement('textarea');
-        textarea.placeholder = "输入数据 (空格/逗号/换行分隔)";
-        textarea.dataset.groupId = groupCount;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'input-wrapper';
+            wrapper.id = `group-wrapper-${groupCount}`;
 
-        const closeBtn = document.createElement('div');
-        closeBtn.className = 'close-btn';
-        closeBtn.innerHTML = '&times;';
-        closeBtn.title = "移除此组";
-        closeBtn.onclick = function() { removeGroup(wrapper.id); };
+            const label = document.createElement('span');
+            label.className = 'group-label';
+            label.innerText = `数据组 ${groupCount}`;
 
-        wrapper.appendChild(closeBtn);
-        wrapper.appendChild(label);
-        wrapper.appendChild(textarea);
-        container.appendChild(wrapper);
-    }
+            const textarea = document.createElement('textarea');
+            textarea.placeholder = "输入数据 (空格/逗号/换行分隔)";
+            textarea.dataset.groupId = groupCount;
 
-    // 移除输入组
-    function removeGroup(wrapperId) {
-        const wrapper = document.getElementById(wrapperId);
-        if (wrapper) {
-            wrapper.remove();
+            const closeBtn = document.createElement('div');
+            closeBtn.className = 'close-btn';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.title = "移除此组";
+            closeBtn.onclick = function () { removeGroup(wrapper.id); };
+
+            wrapper.appendChild(closeBtn);
+            wrapper.appendChild(label);
+            wrapper.appendChild(textarea);
+            container.appendChild(wrapper);
         }
-    }
 
-    // ---------------------- 核心计算逻辑 ----------------------
-
-    function startStatistics() {
-        const inputs = document.querySelectorAll('textarea');
-        const dataGroups = [];
-        let validGroupsFound = false;
-
-        // 1. 解析数据
-        inputs.forEach((input, index) => {
-            const rawText = input.value;
-            // 使用正则分割：逗号、空格、换行
-            const splitData = rawText.split(/[,\s\n]+/);
-            
-            // 过滤无效字符，转为数字
-            const numData = splitData
-                .map(item => parseFloat(item))
-                .filter(item => !isNaN(item));
-
-            if (numData.length > 0) {
-                // 排序 (从小到大)
-                numData.sort((a, b) => a - b);
-                dataGroups.push({
-                    id: index + 1,
-                    name: `组 ${input.dataset.groupId}`,
-                    data: numData
-                });
-                validGroupsFound = true;
+        // 移除输入组
+        function removeGroup(wrapperId) {
+            const wrapper = document.getElementById(wrapperId);
+            if (wrapper) {
+                wrapper.remove();
             }
-        });
-
-        if (!validGroupsFound) {
-            alert("请至少在一个输入框中输入有效的数字数据！");
-            return;
         }
 
-        // 显示结果区域
-        document.getElementById('resultsSection').style.display = 'flex';
+        // ---------------------- 核心计算逻辑 ----------------------
 
-        // 2. 渲染排序后的数据
-        renderSortedData(dataGroups);
+        function startStatistics() {
+            const inputs = document.querySelectorAll('textarea');
+            const dataGroups = [];
+            let validGroupsFound = false;
 
-        // 3. 计算并渲染表格
-        renderTables(dataGroups);
+            // 1. 解析数据
+            inputs.forEach((input, index) => {
+                const rawText = input.value;
+                // 使用正则分割：逗号、空格、换行
+                const splitData = rawText.split(/[,\s\n]+/);
 
-        // 4. 渲染图表
-        renderCharts(dataGroups);
-    }
+                // 过滤无效字符，转为数字
+                const numData = splitData
+                    .map(item => parseFloat(item))
+                    .filter(item => !isNaN(item));
 
-    function renderSortedData(groups) {
-        const container = document.getElementById('sortedDataContainer');
-        container.innerHTML = '';
-        groups.forEach(g => {
-            const div = document.createElement('div');
-            div.className = 'sorted-data-row';
-            div.innerHTML = `<span class="group-name">${g.name}:</span> ${g.data.join(', ')}`;
-            container.appendChild(div);
-        });
-    }
+                if (numData.length > 0) {
+                    // 排序 (从小到大)
+                    numData.sort((a, b) => a - b);
+                    dataGroups.push({
+                        id: index + 1,
+                        name: `组 ${input.dataset.groupId}`,
+                        data: numData
+                    });
+                    validGroupsFound = true;
+                }
+            });
 
-    function renderTables(groups) {
-        const qTbody = document.querySelector('#quantileTable tbody');
-        const sTbody = document.querySelector('#statsTable tbody');
-        qTbody.innerHTML = '';
-        sTbody.innerHTML = '';
+            if (!validGroupsFound) {
+                alert("请至少在一个输入框中输入有效的数字数据！");
+                return;
+            }
 
-        groups.forEach(g => {
-            const d = g.data;
-            const n = d.length;
+            // 显示结果区域
+            document.getElementById('resultsSection').style.display = 'flex';
 
-            // --- 计算核心统计量 ---
-            
-            // 平均数
-            const sum = d.reduce((acc, val) => acc + val, 0);
-            const mean = sum / n;
+            // 2. 渲染排序后的数据
+            renderSortedData(dataGroups);
 
-            // 离差平方和 (SS) = sum((x - mean)^2)
-            const ss = d.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0);
+            // 3. 计算并渲染表格
+            renderTables(dataGroups);
 
-            // 方差 (除以 n)
-            const variance = ss / n;
+            // 4. 渲染图表
+            renderCharts(dataGroups);
+        }
 
-            // 标准差 (除以 n)
-            const stdDev = Math.sqrt(variance);
+        function renderSortedData(groups) {
+            const container = document.getElementById('sortedDataContainer');
+            container.innerHTML = '';
+            groups.forEach(g => {
+                const div = document.createElement('div');
+                div.className = 'sorted-data-row';
+                div.innerHTML = `<span class="group-name">${g.name}:</span> ${g.data.join(', ')}`;
+                container.appendChild(div);
+            });
+        }
 
-            // 众数
-            const mode = calculateMode(d);
+        function renderTables(groups) {
+            const qTbody = document.querySelector('#quantileTable tbody');
+            const sTbody = document.querySelector('#statsTable tbody');
+            qTbody.innerHTML = '';
+            sTbody.innerHTML = '';
 
-            // --- 计算分位数 ---
-            const min = d[0];
-            const max = d[n - 1];
-            // 定义分位点
-            const percentiles = [0.03, 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.97];
-            const pValues = percentiles.map(p => calculateQuantile(d, p));
+            groups.forEach(g => {
+                const d = g.data;
+                const n = d.length;
 
-            // --- 填充表格 1 (分位数) ---
-            const trQ = document.createElement('tr');
-            let qHtml = `<td>${g.name}</td><td>${min}</td>`;
-            pValues.forEach(val => qHtml += `<td>${formatNum(val)}</td>`);
-            qHtml += `<td>${max}</td>`;
-            trQ.innerHTML = qHtml;
-            qTbody.appendChild(trQ);
+                // --- 计算核心统计量 ---
 
-            // --- 填充表格 2 (统计量) ---
-            const trS = document.createElement('tr');
-            trS.innerHTML = `
+                // 平均数
+                const sum = d.reduce((acc, val) => acc + val, 0);
+                const mean = sum / n;
+
+                // 离差平方和 (SS) = sum((x - mean)^2)
+                const ss = d.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0);
+
+                // 方差 (除以 n)
+                const variance = ss / n;
+
+                // 标准差 (除以 n)
+                const stdDev = Math.sqrt(variance);
+
+                // 众数
+                const mode = calculateMode(d);
+
+                // --- 计算分位数 ---
+                const min = d[0];
+                const max = d[n - 1];
+                // 定义分位点
+                const percentiles = [0.03, 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 0.97];
+                const pValues = percentiles.map(p => calculateQuantile(d, p));
+
+                // --- 填充表格 1 (分位数) ---
+                const trQ = document.createElement('tr');
+                let qHtml = `<td>${g.name}</td><td>${min}</td>`;
+                pValues.forEach(val => qHtml += `<td>${formatNum(val)}</td>`);
+                qHtml += `<td>${max}</td>`;
+                trQ.innerHTML = qHtml;
+                qTbody.appendChild(trQ);
+
+                // --- 填充表格 2 (统计量) ---
+                const trS = document.createElement('tr');
+                trS.innerHTML = `
                 <td>${g.name}</td>
                 <td>${formatNum(mean)}</td>
                 <td>${mode}</td>
@@ -448,98 +472,99 @@
                 <td>${formatNum(variance)}</td>
                 <td>${formatNum(stdDev)}</td>
             `;
-            sTbody.appendChild(trS);
-        });
-    }
-
-    // 辅助函数：线性插值法计算分位数
-    // 算法：P_index = (N-1) * p
-    function calculateQuantile(sortedData, p) {
-        if (sortedData.length === 0) return 0;
-        if (sortedData.length === 1) return sortedData[0];
-        
-        const pos = (sortedData.length - 1) * p;
-        const base = Math.floor(pos);
-        const rest = pos - base;
-        
-        if (sortedData[base + 1] !== undefined) {
-            return sortedData[base] + rest * (sortedData[base + 1] - sortedData[base]);
-        } else {
-            return sortedData[base];
+                sTbody.appendChild(trS);
+            });
         }
-    }
 
-    // 辅助函数：计算众数
-    function calculateMode(arr) {
-        const freq = {};
-        let maxFreq = 0;
-        
-        arr.forEach(val => {
-            freq[val] = (freq[val] || 0) + 1;
-            if (freq[val] > maxFreq) maxFreq = freq[val];
-        });
+        // 辅助函数：线性插值法计算分位数
+        // 算法：P_index = (N-1) * p
+        function calculateQuantile(sortedData, p) {
+            if (sortedData.length === 0) return 0;
+            if (sortedData.length === 1) return sortedData[0];
 
-        if (maxFreq === 1) return "无众数";
+            const pos = (sortedData.length - 1) * p;
+            const base = Math.floor(pos);
+            const rest = pos - base;
 
-        const modes = [];
-        for (const k in freq) {
-            if (freq[k] === maxFreq) {
-                modes.push(Number(k));
+            if (sortedData[base + 1] !== undefined) {
+                return sortedData[base] + rest * (sortedData[base + 1] - sortedData[base]);
+            } else {
+                return sortedData[base];
             }
         }
-        return modes.sort((a,b)=>a-b).join(', ');
-    }
 
-    // 辅助函数：格式化数字 (保留4位小数，如果是整数则显示整数)
-    function formatNum(num) {
-        return parseFloat(num.toFixed(4));
-    }
+        // 辅助函数：计算众数
+        function calculateMode(arr) {
+            const freq = {};
+            let maxFreq = 0;
 
-    function renderCharts(groups) {
-        // 1. 箱线图配置
-        const boxData = groups.map(g => ({
-            y: g.data,
-            type: 'box',
-            name: g.name,
-            boxpoints: 'all', // 显示所有点
-            jitter: 0.3,
-            pointpos: -1.8
-        }));
+            arr.forEach(val => {
+                freq[val] = (freq[val] || 0) + 1;
+                if (freq[val] > maxFreq) maxFreq = freq[val];
+            });
 
-        const boxLayout = {
-            margin: { t: 30, b: 40, l: 50, r: 20 },
-            yaxis: { title: '数值' },
-            showlegend: false
-        };
+            if (maxFreq === 1) return "无众数";
 
-        Plotly.newPlot('boxPlot', boxData, boxLayout, {responsive: true});
-
-        // 2. 条形图配置 (显示平均值)
-        const means = groups.map(g => {
-             const sum = g.data.reduce((a, b) => a + b, 0);
-             return sum / g.data.length;
-        });
-        const names = groups.map(g => g.name);
-
-        const barData = [{
-            x: names,
-            y: means,
-            type: 'bar',
-            text: means.map(m => m.toFixed(2)),
-            textposition: 'auto',
-            marker: {
-                color: '#4a90e2'
+            const modes = [];
+            for (const k in freq) {
+                if (freq[k] === maxFreq) {
+                    modes.push(Number(k));
+                }
             }
-        }];
+            return modes.sort((a, b) => a - b).join(', ');
+        }
 
-        const barLayout = {
-            margin: { t: 30, b: 40, l: 50, r: 20 },
-            yaxis: { title: '平均值' }
-        };
+        // 辅助函数：格式化数字 (保留4位小数，如果是整数则显示整数)
+        function formatNum(num) {
+            return parseFloat(num.toFixed(4));
+        }
 
-        Plotly.newPlot('barChart', barData, barLayout, {responsive: true});
-    }
-</script>
+        function renderCharts(groups) {
+            // 1. 箱线图配置
+            const boxData = groups.map(g => ({
+                y: g.data,
+                type: 'box',
+                name: g.name,
+                boxpoints: 'all', // 显示所有点
+                jitter: 0.3,
+                pointpos: -1.8
+            }));
+
+            const boxLayout = {
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                yaxis: { title: '数值' },
+                showlegend: false
+            };
+
+            Plotly.newPlot('boxPlot', boxData, boxLayout, { responsive: true });
+
+            // 2. 条形图配置 (显示平均值)
+            const means = groups.map(g => {
+                const sum = g.data.reduce((a, b) => a + b, 0);
+                return sum / g.data.length;
+            });
+            const names = groups.map(g => g.name);
+
+            const barData = [{
+                x: names,
+                y: means,
+                type: 'bar',
+                text: means.map(m => m.toFixed(2)),
+                textposition: 'auto',
+                marker: {
+                    color: '#4a90e2'
+                }
+            }];
+
+            const barLayout = {
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                yaxis: { title: '平均值' }
+            };
+
+            Plotly.newPlot('barChart', barData, barLayout, { responsive: true });
+        }
+    </script>
 
 </body>
+
 </html>
