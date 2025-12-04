@@ -1,86 +1,104 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数据统计分析工具</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --primary-color: #2A5CAA;
+            --secondary-color: #00E5FF;
+            --accent-color: #6A00FF;
+            --light-color: #010409;
+            --dark-color: #ffffff;
+            --card-bg: #0d1117;
+            --card-border: 1px solid #30363d;
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            --text-secondary: #8b949e;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-color: var(--light-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 2rem 1rem;
-            color: #333;
+            color: var(--dark-color);
         }
-        
+
         .container {
             max-width: 900px;
             width: 100%;
-            background: white;
+            background: var(--card-bg);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             padding: 2rem;
             margin-bottom: 2rem;
+            border: var(--card-border);
         }
-        
+
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: var(--secondary-color);
             margin-bottom: 1.5rem;
             font-weight: 600;
         }
-        
+
         .description {
             text-align: center;
-            color: #7f8c8d;
+            color: var(--text-secondary);
             margin-bottom: 2rem;
             line-height: 1.6;
         }
-        
+
         .input-section {
             margin-bottom: 2rem;
         }
-        
+
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
-            color: #2c3e50;
+            color: var(--secondary-color);
         }
-        
+
         .input-group {
             display: flex;
             gap: 10px;
             margin-bottom: 1rem;
         }
-        
+
         input {
             flex: 1;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border: 1px solid #30363d;
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s;
+            background: #161b22;
+            color: var(--dark-color);
         }
-        
+
         input:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.2);
         }
-        
+
         button {
-            background: #3498db;
+            background: var(--primary-color);
             color: white;
             border: none;
             border-radius: 8px;
@@ -90,106 +108,110 @@
             transition: background 0.3s;
             font-weight: 500;
         }
-        
+
         button:hover {
-            background: #2980b9;
+            background: #1a4a9a;
         }
-        
+
         .examples {
             font-size: 14px;
-            color: #7f8c8d;
+            color: var(--text-secondary);
             margin-top: 0.5rem;
         }
-        
+
         .results {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .result-card {
-            background: #f8f9fa;
+            background: #161b22;
             border-radius: 8px;
             padding: 1.5rem;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: none;
             transition: transform 0.3s;
+            border: 1px solid #30363d;
         }
-        
+
         .result-card:hover {
             transform: translateY(-5px);
+            border-color: var(--secondary-color);
         }
-        
+
         .result-title {
             font-size: 16px;
-            color: #7f8c8d;
+            color: var(--text-secondary);
             margin-bottom: 0.5rem;
         }
-        
+
         .result-value {
             font-size: 24px;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--secondary-color);
         }
-        
+
         .chart-container {
             margin-top: 2rem;
             height: 300px;
         }
-        
+
         .data-list {
             margin-top: 1.5rem;
             padding: 1rem;
-            background: #f8f9fa;
+            background: #161b22;
             border-radius: 8px;
+            border: 1px solid #30363d;
         }
-        
+
         .data-list h3 {
             margin-bottom: 0.5rem;
-            color: #2c3e50;
+            color: var(--secondary-color);
         }
-        
+
         .data-items {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
         }
-        
+
         .data-item {
-            background: #3498db;
+            background: var(--primary-color);
             color: white;
             padding: 5px 10px;
             border-radius: 20px;
             font-size: 14px;
         }
-        
+
         .error {
-            color: #e74c3c;
+            color: #ff7b72;
             margin-top: 0.5rem;
             font-size: 14px;
         }
-        
+
         @media (max-width: 600px) {
             .container {
                 padding: 1.5rem;
             }
-            
+
             .input-group {
                 flex-direction: column;
             }
-            
+
             .results {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>数据统计分析工具</h1>
         <p class="description">输入一组数值数据，系统将自动计算并可视化其统计特征</p>
-        
+
         <div class="input-section">
             <label for="dataInput">输入数据（用逗号、空格或换行分隔）</label>
             <div class="input-group">
@@ -199,12 +221,12 @@
             <p class="examples">示例格式: 10,15,20,25,30 或 10 15 20 25 30</p>
             <div class="error" id="errorMsg"></div>
         </div>
-        
+
         <div class="data-list" id="dataList" style="display: none;">
             <h3>输入的数据</h3>
             <div class="data-items" id="dataItems"></div>
         </div>
-        
+
         <div class="results">
             <div class="result-card">
                 <div class="result-title">平均数</div>
@@ -223,14 +245,14 @@
                 <div class="result-value" id="stdDevValue">-</div>
             </div>
         </div>
-        
+
         <div class="chart-container">
             <canvas id="dataChart"></canvas>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const dataInput = document.getElementById('dataInput');
             const calculateBtn = document.getElementById('calculateBtn');
             const errorMsg = document.getElementById('errorMsg');
@@ -240,39 +262,39 @@
             const ssValue = document.getElementById('ssValue');
             const varianceValue = document.getElementById('varianceValue');
             const stdDevValue = document.getElementById('stdDevValue');
-            
+
             let dataChart = null;
-            
+
             // 设置示例数据
             dataInput.value = "10, 15, 20, 25, 30";
-            
+
             calculateBtn.addEventListener('click', calculateStatistics);
-            
+
             function calculateStatistics() {
                 errorMsg.textContent = '';
-                
+
                 // 获取输入数据并转换为数组
                 const inputText = dataInput.value.trim();
                 if (!inputText) {
                     errorMsg.textContent = '请输入数据';
                     return;
                 }
-                
+
                 // 使用正则表达式分割输入（支持逗号、空格、换行）
                 const dataArray = inputText.split(/[\s,]+/).map(item => parseFloat(item));
-                
+
                 // 验证数据
                 const invalidItems = dataArray.filter(item => isNaN(item));
                 if (invalidItems.length > 0) {
                     errorMsg.textContent = `输入包含无效数据: ${invalidItems.join(', ')}`;
                     return;
                 }
-                
+
                 if (dataArray.length < 2) {
                     errorMsg.textContent = '请输入至少两个数据点';
                     return;
                 }
-                
+
                 // 显示数据列表
                 dataItems.innerHTML = '';
                 dataArray.forEach(item => {
@@ -282,54 +304,54 @@
                     dataItems.appendChild(dataItem);
                 });
                 dataList.style.display = 'block';
-                
+
                 // 计算统计量
                 const mean = calculateMean(dataArray);
                 const ss = calculateSumOfSquares(dataArray, mean);
                 const variance = calculateVariance(dataArray, mean);
                 const stdDev = Math.sqrt(variance);
-                
+
                 // 更新显示
                 meanValue.textContent = mean.toFixed(4);
                 ssValue.textContent = ss.toFixed(4);
                 varianceValue.textContent = variance.toFixed(4);
                 stdDevValue.textContent = stdDev.toFixed(4);
-                
+
                 // 更新图表
                 updateChart(dataArray, mean);
             }
-            
+
             function calculateMean(data) {
                 return data.reduce((sum, value) => sum + value, 0) / data.length;
             }
-            
+
             function calculateSumOfSquares(data, mean) {
                 return data.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0);
             }
-            
+
             function calculateVariance(data, mean) {
                 return calculateSumOfSquares(data, mean) / data.length;
             }
-            
+
             function updateChart(data, mean) {
                 const ctx = document.getElementById('dataChart').getContext('2d');
-                
+
                 // 如果图表已存在，销毁它
                 if (dataChart) {
                     dataChart.destroy();
                 }
-                
+
                 // 创建新图表
                 dataChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: data.map((_, i) => `数据点 ${i+1}`),
+                        labels: data.map((_, i) => `数据点 ${i + 1}`),
                         datasets: [
                             {
                                 label: '数据值',
                                 data: data,
-                                backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                                borderColor: 'rgba(52, 152, 219, 1)',
+                                backgroundColor: 'rgba(42, 92, 170, 0.7)',
+                                borderColor: 'rgba(42, 92, 170, 1)',
                                 borderWidth: 1
                             },
                             {
@@ -337,7 +359,7 @@
                                 data: Array(data.length).fill(mean),
                                 type: 'line',
                                 fill: false,
-                                borderColor: 'rgba(231, 76, 60, 1)',
+                                borderColor: 'rgba(0, 229, 255, 1)',
                                 borderWidth: 2,
                                 pointRadius: 0
                             }
@@ -351,26 +373,50 @@
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: '数值'
+                                    text: '数值',
+                                    color: '#8b949e'
+                                },
+                                grid: {
+                                    color: '#30363d'
+                                },
+                                ticks: {
+                                    color: '#8b949e'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: '#30363d'
+                                },
+                                ticks: {
+                                    color: '#8b949e'
                                 }
                             }
                         },
                         plugins: {
                             tooltip: {
                                 mode: 'index',
-                                intersect: false
+                                intersect: false,
+                                backgroundColor: '#161b22',
+                                titleColor: '#ffffff',
+                                bodyColor: '#8b949e',
+                                borderColor: '#30363d',
+                                borderWidth: 1
                             },
                             legend: {
                                 position: 'top',
+                                labels: {
+                                    color: '#8b949e'
+                                }
                             }
                         }
                     }
                 });
             }
-            
+
             // 初始计算示例数据
             calculateStatistics();
         });
     </script>
 </body>
+
 </html>
