@@ -7,19 +7,26 @@
     <title>科学计算器</title>
     <style>
         :root {
-            --bg-color: #1a1a1a;
-            --panel-color: #2d2d2d;
-            --text-color: #ffffff;
-            --accent-color: #007acc;
-            --button-bg: #3d3d3d;
-            --button-hover: #4d4d4d;
-            --button-active: #5d5d5d;
-            --cal-bg: #e67e22;
-            /* Operator color */
-            --func-bg: #2ecc71;
-            /* Function color */
-            --control-bg: #e74c3c;
-            /* Control color */
+            --primary-color: #2A5CAA;
+            --secondary-color: #00E5FF;
+            --accent-color: #6A00FF;
+            --light-color: #010409;
+            --dark-color: #ffffff;
+            --success-color: #28a745;
+            --card-bg: #0d1117;
+            --card-border: 1px solid #30363d;
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            --transition: all 0.3s ease;
+
+            /* Mapped Variables */
+            --bg-color: var(--light-color);
+            --panel-color: var(--card-bg);
+            --text-color: var(--dark-color);
+            --button-bg: #161b22;
+            --button-border: #30363d;
+            --button-hover: #21262d;
+            --button-active: #2f363d;
+            --operator-color: var(--secondary-color);
         }
 
         body {
@@ -36,7 +43,8 @@
         .calculator {
             background-color: var(--panel-color);
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
             width: 400px;
             max-width: 95vw;
             overflow: hidden;
@@ -47,7 +55,7 @@
         /* Display Area */
         .display-container {
             padding: 20px;
-            background-color: #000;
+            background-color: rgba(0, 0, 0, 0.3);
             position: relative;
         }
 
@@ -98,53 +106,79 @@
         }
 
         button {
-            border: none;
+            border: 1px solid var(--button-border);
             border-radius: 6px;
             height: 50px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            color: white;
+            transition: var(--transition);
+            color: #8b949e;
+            /* Muted text default */
             background-color: var(--button-bg);
             user-select: none;
         }
 
         button:hover {
-            background-color: var(--button-hover);
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+            transform: translateY(-2px);
         }
 
         button:active {
             transform: scale(0.96);
-            background-color: var(--button-active);
         }
 
         /* Specific Button Styles */
         .btn-num {
             background-color: var(--button-bg);
+            color: var(--text-color);
         }
 
         .btn-op {
-            background-color: #4a4a4a;
-            color: #ff9f43;
+            background-color: rgba(42, 92, 170, 0.1);
+            /* Slight primary tint */
+            color: var(--secondary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-op:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .btn-func {
-            background-color: #34495e;
             font-size: 14px;
+            font-style: italic;
         }
 
         .btn-control {
-            background-color: #c0392b;
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .btn-control:hover {
+            background-color: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
         }
 
         .btn-equal {
-            background-color: var(--accent-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
             grid-column: span 1;
         }
 
+        .btn-equal:hover {
+            opacity: 0.9;
+            color: white;
+            border: none;
+            /* Override default hover border */
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
         .btn-arrow {
-            background-color: #666;
             font-size: 20px;
         }
     </style>
