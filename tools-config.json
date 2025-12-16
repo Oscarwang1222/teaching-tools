@@ -164,6 +164,18 @@
       ],
       "icon": "",
       "featured": false
+    },
+    {
+      "name": "作业管理系统",
+      "description": "全新的作业管理系统",
+      "tags": [
+        "作业"
+      ],
+      "subject": [
+        "通用"
+      ],
+      "icon": "",
+      "featured": true
     }
   ]
 }
