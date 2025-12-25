@@ -176,6 +176,18 @@
       ],
       "icon": "",
       "featured": true
+    },
+    {
+      "name": "智能点名器",
+      "description": "简洁的自动随机点名系统",
+      "tags": [
+        "点名"
+      ],
+      "subject": [
+        "通用"
+      ],
+      "icon": "",
+      "featured": true
     }
   ]
 }
