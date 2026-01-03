@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <script defer src="https://cloud.umami.is/script.js"
+        data-website-id="d6ee6da5-3779-4551-a754-7f63fdf95dbb"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一次函数演示</title>
+    <style>
+        :root {
+            --primary-color: #2A5CAA;
+            --secondary-color: #00E5FF;
+            --accent-color: #00E5FF;
+            --light-color: #010409;
+            --dark-color: #ffffff;
+            --card-bg: #0d1117;
+            --card-border: 1px solid #30363d;
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            --text-secondary: #8b949e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .graph-container {
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+        }
+
+        canvas {
+            background: #000;
+            border-radius: 5px;
+        }
+
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-group {
+            background: #161b22;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+
+        .control-title {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .slider-container {
+            margin: 10px 0;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary-color);
+        }
+
+        .function-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5em;
+            text-align: center;
+            padding: 15px;
+            background: #161b22;
+            border-radius: 8px;
+            color: var(--accent-color);
+            border: 1px solid var(--secondary-color);
+            margin-top: 10px;
+        }
+
+        .key-points {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .point-card {
+            background: #161b22;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #30363d;
+        }
+
+        .point-title {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        .reset-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #1a4a9a;
+        }
+
+        .explanation {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: var(--card-border);
+        }
+
+        .explanation h3 {
+            color: var(--secondary-color);
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        footer {
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>一次函数演示</h1>
+        <p class="subtitle">探索一次函数 y = kx + b 中斜率和截距的作用</p>
+    </header>
+
+    <div class="content">
+        <div class="graph-container">
+            <canvas id="graphCanvas" width="600" height="400"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-title">
+                    <span>斜率 (k)</span>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>负斜率</span>
+                        <span id="kValue">1.0</span>
+                        <span>正斜率</span>
+                    </div>
+                    <input type="range" id="kSlider" min="-3" max="3" step="0.1" value="1">
+                </div>
+                <p>斜率表示直线的倾斜程度：</p>
+                <ul>
+                    <li>k > 0: 函数递增</li>
+                    <li>k = 0: 水平直线</li>
+                    <li>k < 0: 函数递减</li>
+                </ul>
+            </div>
+
+            <div class="control-group">
+                <div class="control-title">
+                    <span>截距 (b)</span>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>负截距</span>
+                        <span id="bValue">0.0</span>
+                        <span>正截距</span>
+                    </div>
+                    <input type="range" id="bSlider" min="-5" max="5" step="0.1" value="0">
+                </div>
+                <p>截距表示直线与y轴的交点：</p>
+                <ul>
+                    <li>当x=0时，y=b</li>
+                    <li>b值上下平移直线</li>
+                </ul>
+            </div>
+
+            <div class="function-display" id="functionText">
+                y = 1.0x + 0.0
+            </div>
+
+            <div class="key-points">
+                <div class="point-card">
+                    <div class="point-title">斜率 (k)</div>
+                    <div id="slopeInfo">k = 1.0</div>
+                </div>
+                <div class="point-card">
+                    <div class="point-title">截距 (b)</div>
+                    <div id="interceptInfo">b = 0.0</div>
+                </div>
+                <div class="point-card">
+                    <div class="point-title">与y轴交点</div>
+                    <div id="yIntercept">(0, 0.0)</div>
+                </div>
+                <div class="point-card">
+                    <div class="point-title">与x轴交点</div>
+                    <div id="xIntercept">(0.0, 0)</div>
+                </div>
+            </div>
+
+            <button class="reset-btn" id="resetBtn">重置为默认值</button>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h3>一次函数解析</h3>
+        <p>一次函数是形如 y = kx + b 的函数，其中：</p>
+        <ul>
+            <li><strong>k</strong> 是斜率，表示直线的倾斜程度。当k>0时，函数递增；当k<0时，函数递减；当k=0时，函数为水平直线。< /li>
+            <li><strong>b</strong> 是y轴截距，表示当x=0时，函数与y轴的交点。</li>
+        </ul>
+        <p>通过调整上方的滑块，您可以直观地看到斜率和截距如何影响一次函数的图像。</p>
+    </div>
+
+    <footer>
+        <p>一次函数演示 &copy; 2023 | 数学可视化工具</p>
+    </footer>
+
+    <script>
+        // 获取DOM元素
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const kSlider = document.getElementById('kSlider');
+        const bSlider = document.getElementById('bSlider');
+        const kValue = document.getElementById('kValue');
+        const bValue = document.getElementById('bValue');
+        const functionText = document.getElementById('functionText');
+        const slopeInfo = document.getElementById('slopeInfo');
+        const interceptInfo = document.getElementById('interceptInfo');
+        const yIntercept = document.getElementById('yIntercept');
+        const xIntercept = document.getElementById('xIntercept');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // 初始值
+        let k = parseFloat(kSlider.value);
+        let b = parseFloat(bSlider.value);
+
+        // 绘制网格
+        function drawGrid() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const step = 30; // 网格间距
+
+            // 绘制背景
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+
+            // 绘制网格线
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+
+            // 垂直网格线
+            for (let x = centerX; x < width; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            for (let x = centerX; x > 0; x -= step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+
+            // 水平网格线
+            for (let y = centerY; y < height; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            for (let y = centerY; y > 0; y -= step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#8b949e';
+            ctx.lineWidth = 2;
+
+            // X轴
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.stroke();
+
+            // Y轴
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            ctx.stroke();
+
+            // 绘制刻度值
+            ctx.fillStyle = '#8b949e';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            // X轴刻度
+            for (let x = centerX + step; x < width; x += step) {
+                ctx.fillText(((x - centerX) / step).toString(), x, centerY + 5);
+            }
+            for (let x = centerX - step; x > 0; x -= step) {
+                ctx.fillText(((x - centerX) / step).toString(), x, centerY + 5);
+            }
+
+            // Y轴刻度
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            for (let y = centerY + step; y < height; y += step) {
+                ctx.fillText((-(y - centerY) / step).toString(), centerX - 5, y);
+            }
+            for (let y = centerY - step; y > 0; y -= step) {
+                ctx.fillText((-(y - centerY) / step).toString(), centerX - 5, y);
+            }
+
+            ctx.fillText('0', centerX - 5, centerY + 5);
+        }
+
+        // 绘制函数
+        function drawFunction() {
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制网格和坐标轴
+            drawGrid();
+
+            // 绘制函数图像
+            ctx.beginPath();
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 3;
+
+            // 计算函数在画布上的点
+            for (let x = -10; x <= 10; x += 0.1) {
+                const y = k * x + b;
+
+                // 将数学坐标转换为画布坐标
+                const canvasX = x * 30 + canvas.width / 2;
+                const canvasY = canvas.height / 2 - y * 30;
+
+                if (x === -10) {
+                    ctx.moveTo(canvasX, canvasY);
+                } else {
+                    ctx.lineTo(canvasX, canvasY);
+                }
+            }
+            ctx.stroke();
+
+
+            // 处理显示格式
+            let kDisplay = k.toFixed(1);
+            let bDisplay = b.toFixed(1);
+
+            if (k === 1) kDisplay = '';
+            else if (k === -1) kDisplay = '-';
+
+            if (b === 0) {
+                functionText.textContent = `y = ${kDisplay}x`;
+            } else if (b > 0) {
+                functionText.textContent = `y = ${kDisplay}x + ${bDisplay}`;
+            } else {
+                functionText.textContent = `y = ${kDisplay}x - ${Math.abs(b).toFixed(1)}`;
+            }
+
+            // 更新关键点信息
+            slopeInfo.textContent = `k = ${k.toFixed(1)}`;
+            interceptInfo.textContent = `b = ${b.toFixed(1)}`;
+            yIntercept.textContent = `(0, ${b.toFixed(1)})`;
+
+            // 计算与x轴交点
+            let xInterceptValue = 0;
+            if (k !== 0) {
+                xInterceptValue = (-b / k).toFixed(1);
+            } else {
+                xInterceptValue = b === 0 ? "所有点" : "无";
+            }
+
+            if (k === 0 && b !== 0) {
+                xIntercept.textContent = "无交点";
+            } else if (k === 0 && b === 0) {
+                xIntercept.textContent = "所有点";
+            } else {
+                xIntercept.textContent = `(${xInterceptValue}, 0)`;
+            }
+        }
+
+        // 事件监听器
+        kSlider.addEventListener('input', function () {
+            k = parseFloat(this.value);
+            kValue.textContent = k.toFixed(1);
+            drawFunction();
+        });
+
+        bSlider.addEventListener('input', function () {
+            b = parseFloat(this.value);
+            bValue.textContent = b.toFixed(1);
+            drawFunction();
+        });
+
+        resetBtn.addEventListener('click', function () {
+            k = 1;
+            b = 0;
+            kSlider.value = k;
+            bSlider.value = b;
+            kValue.textContent = k.toFixed(1);
+            bValue.textContent = b.toFixed(1);
+            drawFunction();
+        });
+
+        // 初始绘制
+        drawFunction();
+
+        // 响应窗口大小变化
+        window.addEventListener('resize', function () {
+            // 在实际应用中，这里可以添加响应式调整画布大小的代码
+        });
+    </script>
+</body>
+
+</html>
