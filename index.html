@@ -7,6 +7,7 @@
         data-website-id="d6ee6da5-3779-4551-a754-7f63fdf95dbb"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HTML教学工具集</title>
+    <link rel="stylesheet" href="user-auth.css">
     <style>
         :root {
             --primary-color: #2A5CAA;
@@ -454,6 +455,28 @@
 
 
 <body>
+    <!-- 用户登录区域 - 放在页面顶部合适位置 -->
+    <div class="user-section" id="userSection">
+        <!-- 未登录时显示 -->
+        <button class="user-btn" id="loginBtn">登录</button>
+        <button class="user-btn" id="registerBtn">注册</button>
+
+        <!-- 登录后显示 -->
+        <div id="loggedInUser" style="display: none;">
+            <div class="user-avatar" id="userAvatar"></div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-info">
+                    <div class="username" id="dropdownUsername"></div>
+                    <div class="phone" id="dropdownPhone"></div>
+                </div>
+                <ul class="dropdown-menu">
+                    <li><a href="#" id="editProfileBtn">修改个人信息</a></li>
+                    <li><a href="#" id="changePasswordBtn">修改密码</a></li>
+                    <li><a href="#" id="logoutBtn">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <header>
             <h1>HTML教学工具集</h1>
@@ -509,6 +532,107 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="resetSelection">重置选择</button>
                 <button class="btn" id="applySelection">应用筛选</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户登录注册模态框 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">登录</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="apiMessage"></div>
+
+                <!-- 登录表单 -->
+                <form id="loginForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="loginAccount">用户名/手机号</label>
+                        <input type="text" id="loginAccount" placeholder="请输入用户名或手机号">
+                        <div class="error" id="loginAccountError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">密码</label>
+                        <input type="password" id="loginPassword" placeholder="请输入密码">
+                        <div class="error" id="loginPasswordError"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn" style="width: 100%;">登录</button>
+                    </div>
+                </form>
+
+                <!-- 注册表单 -->
+                <form id="registerForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="regUsername">用户名</label>
+                        <input type="text" id="regUsername" placeholder="请输入用户名（3-50字符）">
+                        <div class="error" id="regUsernameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">手机号</label>
+                        <input type="text" id="regPhone" placeholder="请输入11位手机号">
+                        <div class="error" id="regPhoneError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">密码</label>
+                        <input type="password" id="regPassword" placeholder="请输入密码（至少6位）">
+                        <div class="error" id="regPasswordError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPassword">确认密码</label>
+                        <input type="password" id="regConfirmPassword" placeholder="请再次输入密码">
+                        <div class="error" id="regConfirmPasswordError"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn" style="width: 100%;">注册</button>
+                    </div>
+                </form>
+
+                <!-- 修改个人信息表单 -->
+                <form id="editProfileForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="editUsername">用户名</label>
+                        <input type="text" id="editUsername" placeholder="请输入新用户名">
+                        <div class="error" id="editUsernameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">手机号</label>
+                        <input type="text" id="editPhone" placeholder="请输入新手机号">
+                        <div class="error" id="editPhoneError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPassword">当前密码（用于验证）</label>
+                        <input type="password" id="editPassword" placeholder="请输入当前密码">
+                        <div class="error" id="editPasswordError"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn" style="width: 100%;">保存修改</button>
+                    </div>
+                </form>
+
+                <!-- 修改密码表单 -->
+                <form id="changePasswordForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="currentPassword">当前密码</label>
+                        <input type="password" id="currentPassword" placeholder="请输入当前密码">
+                        <div class="error" id="currentPasswordError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">新密码</label>
+                        <input type="password" id="newPassword" placeholder="请输入新密码（至少6位）">
+                        <div class="error" id="newPasswordError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">确认新密码</label>
+                        <input type="password" id="confirmNewPassword" placeholder="请再次输入新密码">
+                        <div class="error" id="confirmNewPasswordError"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn" style="width: 100%;">修改密码</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -840,6 +964,8 @@
             }
         });
     </script>
+    <script src="user-auth.js"></script>
+
 </body>
 
 </html>
